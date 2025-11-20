@@ -28,6 +28,7 @@ export default function AdminLayout({ children }) {
           >
             Kelola Destinasi
           </Link>
+          
         </nav>
 
         <div className="p-4 border-t border-blue-500 text-sm text-center">

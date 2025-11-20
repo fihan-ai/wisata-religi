@@ -1,7 +1,5 @@
 // src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
-
-// Layouts (sesuai folder mu)
 import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
 
@@ -14,8 +12,10 @@ import BeritaPage from "./pages/BeritaPage";
 import Destinasi from "./pages/Destinasi";
 import DetailDestinasi from "./pages/DetailDestinasi";
 
-// Halaman admin (sesuai folder mu)
+// Halaman admin
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
+import BeritaAdmin from "./pages/admin/BeritaAdmin";
+import DestinasiAdmin from "./pages/admin/DestinasiAdmin";
 
 function App() {
   return (
@@ -84,6 +84,24 @@ function App() {
         element={
           <AdminLayout>
             <DashboardAdmin />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="/admin/berita"
+        element={
+          <AdminLayout>
+            <BeritaAdmin />
+          </AdminLayout>
+        }
+      />
+
+      <Route
+        path="/admin/destinasi"
+        element={
+          <AdminLayout>
+            <DestinasiAdmin />
           </AdminLayout>
         }
       />
