@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DestinasiController;
 use App\Http\Controllers\ArtikelController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +27,9 @@ Route::apiResource('destinasi', DestinasiController::class);
 // API untuk tabel artikel
 Route::apiResource('artikel', ArtikelController::class);
 
+Route::get('/', function (Request $request) {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'API root — backend is up'
+    ]);
+});

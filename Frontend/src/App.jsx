@@ -2,6 +2,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import UserLayout from "./layouts/UserLayout";
 import AdminLayout from "./layouts/AdminLayout";
+import { use, useEffect } from "react";
+import axios from "./api/axios";
 
 // Halaman user
 import Home from "./pages/Home";
@@ -131,5 +133,8 @@ function App() {
     </Routes>
   );
 }
+
+
+
 
 export default App;
