@@ -11,6 +11,7 @@ import Kontak from "./pages/Kontak";
 import BeritaPage from "./pages/BeritaPage";
 import Destinasi from "./pages/Destinasi";
 import DetailDestinasi from "./pages/DetailDestinasi";
+import DetailBerita from "./pages/DetailBerita";
 
 // Halaman admin
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
@@ -69,6 +70,15 @@ function App() {
           </UserLayout>
         }
       />
+      <Route
+        path="/berita/:slug"
+        element={
+          <UserLayout>
+            <DetailBerita />
+          </UserLayout>
+        }
+      />
+
       <Route
         path="/destinasi/:slug"
         element={
