@@ -17,6 +17,7 @@ import DetailBerita from "./pages/DetailBerita";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import BeritaAdmin from "./pages/admin/BeritaAdmin";
 import DestinasiAdmin from "./pages/admin/DestinasiAdmin";
+import BannerAdmin from "./pages/admin/BannerAdmin";
 
 function App() {
   return (
@@ -115,6 +116,14 @@ function App() {
           </AdminLayout>
         }
       />
+      <Route
+  path="/admin/banner"
+  element={
+    <AdminLayout>
+      <BannerAdmin />
+    </AdminLayout>
+  }
+/>
 
       {/* Fallbacks */}
       <Route path="/Berita" element={<Navigate to="/berita" replace />} />

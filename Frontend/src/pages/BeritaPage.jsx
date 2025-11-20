@@ -1,3 +1,4 @@
+// src/pages/BeritaPage.jsx
 import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -9,7 +10,8 @@ const DUMMY_NEWS = [
     summary:
       "Pemerintah kota meresmikan kawasan wisata religi dengan berbagai fasilitas pendukung untuk pengunjung.",
     category: "Event",
-    image: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1470&auto=format&fit=crop",
     date: "2025-02-10",
     readTime: 4,
   },
@@ -19,7 +21,8 @@ const DUMMY_NEWS = [
     summary:
       "Dinas Perhubungan menyiapkan rekayasa lalu lintas selama kegiatan ziarah akbar berlangsung.",
     category: "Pengumuman",
-    image: "https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1470&auto=format&fit=crop",
     date: "2025-02-06",
     readTime: 3,
   },
@@ -29,7 +32,8 @@ const DUMMY_NEWS = [
     summary:
       "Rekomendasi kuliner halal dan ramah keluarga yang mudah dijangkau dari destinasi utama.",
     category: "Panduan",
-    image: "https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1470&auto=format&fit=crop",
     date: "2025-01-30",
     readTime: 5,
   },
@@ -39,7 +43,8 @@ const DUMMY_NEWS = [
     summary:
       "Panduan singkat mengenai pakaian, kebersihan, dan etika selama berkunjung.",
     category: "Panduan",
-    image: "https://images.unsplash.com/photo-1520975930722-114c3eb2c5be?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1520975930722-114c3eb2c5be?q=80&w=1470&auto=format&fit=crop",
     date: "2025-01-22",
     readTime: 6,
   },
@@ -49,7 +54,8 @@ const DUMMY_NEWS = [
     summary:
       "Beberapa titik destinasi mendapatkan renovasi ringan untuk meningkatkan kenyamanan pengunjung.",
     category: "Update Fasilitas",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1470&auto=format&fit=crop",
     date: "2025-01-10",
     readTime: 3,
   },
@@ -59,13 +65,26 @@ const DUMMY_NEWS = [
     summary:
       "Pelatihan pemandu wisata difokuskan pada narasi sejarah dan layanan ramah difabel.",
     category: "Komunitas",
-    image: "https://images.unsplash.com/photo-1504386106331-3e4e71712b38?q=80&w=1470&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1504386106331-3e4e71712b38?q=80&w=1470&auto=format&fit=crop",
     date: "2024-12-28",
     readTime: 4,
   },
 ];
 
 const CATEGORIES = ["Semua", "Event", "Pengumuman", "Panduan", "Update Fasilitas", "Komunitas"];
+
+// fallback image lokal (file yang kamu upload)
+const LOCAL_FALLBACK_IMAGE = "/mnt/data/4e716d68-85b0-46d9-b905-b87c44690966.png";
+
+function slugify(s) {
+  return s
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 export default function BeritaPage() {
   // UI state
@@ -81,9 +100,11 @@ export default function BeritaPage() {
   useEffect(() => {
     setLoading(true);
     const t = setTimeout(() => {
-      setData(DUMMY_NEWS);
+      // tambahkan slug ke tiap item agar Link menuju /berita/:slug
+      const withSlug = DUMMY_NEWS.map((n) => ({ ...n, slug: slugify(n.title) }));
+      setData(withSlug);
       setLoading(false);
-    }, 500);
+    }, 350);
     return () => clearTimeout(t);
   }, []);
 
@@ -111,7 +132,8 @@ export default function BeritaPage() {
   const pageData = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/40 pt-24 pb-16">
+    // beri padding-top responsif agar konten tidak ketutup navbar fixed
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/40 pt-24 md:pt-28 pb-16">
       <div className="container mx-auto px-4 md:px-8">
         {/* Header */}
         <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
@@ -130,17 +152,23 @@ export default function BeritaPage() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cari berita..."
                 className="pl-10 pr-3 py-2 w-full sm:w-64 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/90"
+                aria-label="Cari berita"
               />
-              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
             </div>
 
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="px-3 py-2 rounded-xl border border-gray-300 bg-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Filter kategori"
             >
               {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
 
@@ -148,6 +176,7 @@ export default function BeritaPage() {
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               className="px-3 py-2 rounded-xl border border-gray-300 bg-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Sortir"
             >
               <option value="terbaru">Terbaru</option>
               <option value="terlama">Terlama</option>
@@ -178,37 +207,59 @@ export default function BeritaPage() {
           <>
             {pageData.length === 0 ? (
               <div className="text-center py-24 text-gray-600">
-                <svg className="mx-auto h-10 w-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6"/></svg>
+                <svg className="mx-auto h-10 w-10 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
+                </svg>
                 Tidak ada berita yang cocok dengan filter.
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {pageData.map((item) => (
                   <article key={item.id} className="group overflow-hidden rounded-2xl shadow-sm hover:shadow-lg transition-shadow bg-white">
-                    <div className="relative h-44">
-                      <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                        <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2v-8H3v8a2 2 0 002 2z"/></svg>
-                        <span>{new Date(item.date).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}</span>
-                        <span>•</span>
-                        <span>{item.readTime} menit baca</span>
+                    <Link to={`/berita/${item.slug}`} className="block">
+                      <div className="relative h-44">
+                        <img
+                          src={item.image || LOCAL_FALLBACK_IMAGE}
+                          alt={item.title}
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       </div>
+                      <div className="p-5">
+                        {/* Title */}
+                        <h3 className="text-lg font-bold leading-snug line-clamp-2">{item.title}</h3>
 
-                      <h3 className="text-lg font-bold leading-snug line-clamp-2">{item.title}</h3>
-                      <p className="text-sm text-gray-600 mt-2 line-clamp-3">{item.summary}</p>
+                        {/* Summary */}
+                        <p className="text-sm text-gray-600 mt-2 line-clamp-3">{item.summary}</p>
 
-                      <div className="flex items-center justify-between mt-4">
-                        <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                          {item.category}
-                        </span>
-                        <Link to="#" className="inline-flex items-center text-blue-700 font-medium group">
-                          Baca selengkapnya
-                          <svg className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/></svg>
-                        </Link>
+                        {/* Meta (tanggal + readTime) moved down */}
+                        <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
+                          <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3M3 11h18M5 19h14a2 2 0 002-2v-8H3v8a2 2 0 002 2z" />
+                          </svg>
+                          <span>
+                            {new Date(item.date).toLocaleDateString("id-ID", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                          <span>•</span>
+                          <span>{item.readTime} menit baca</span>
+                        </div>
+
+                        <div className="flex items-center justify-between mt-4">
+                          <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                            {item.category}
+                          </span>
+                          <span className="inline-flex items-center text-blue-700 font-medium group-hover:underline">
+                            Baca selengkapnya
+                            <svg className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                            </svg>
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </article>
                 ))}
               </div>

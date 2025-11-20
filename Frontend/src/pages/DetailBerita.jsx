@@ -84,7 +84,7 @@ export default function DetailBerita() {
 
   if (!article) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4">
+      <div className="max-w-4xl mx-auto pt-32 pb-10 px-4">
         <div className="bg-white rounded-2xl shadow p-8 text-center">
           <h2 className="text-2xl font-semibold mb-2">Berita tidak ditemukan</h2>
           <p className="text-gray-600 mb-6">Maaf, berita yang kamu cari tidak tersedia atau sudah dihapus.</p>
@@ -103,7 +103,8 @@ export default function DetailBerita() {
   const readMinutes = Math.max(1, Math.round(words / 200));
 
   return (
-    <div className="max-w-5xl mx-auto py-10 px-4">
+    // tambahkan top padding agar tidak tertutup navbar yang fixed
+    <div className="max-w-5xl mx-auto pt-32 pb-10 px-4">
       <article className="bg-white rounded-2xl shadow p-6">
         <header className="mb-6">
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
@@ -114,7 +115,7 @@ export default function DetailBerita() {
             <span className="px-2 py-1 bg-gray-100 rounded-full text-xs">{article.category}</span>
           </div>
 
-          <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
+          <h1 className="text-3xl font-bold mb-4 article-title">{article.title}</h1>
           <p className="text-gray-700 mb-4">{article.summary}</p>
 
           <div className="w-full rounded-lg overflow-hidden mb-4">

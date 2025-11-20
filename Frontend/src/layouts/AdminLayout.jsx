@@ -16,19 +16,28 @@ export default function AdminLayout({ children }) {
           >
             Dashboard
           </Link>
+
           <Link
             to="/admin/berita"
             className="block py-2 px-3 rounded hover:bg-blue-600 transition"
           >
             Kelola Berita
           </Link>
+
           <Link
             to="/admin/destinasi"
             className="block py-2 px-3 rounded hover:bg-blue-600 transition"
           >
             Kelola Destinasi
           </Link>
-          
+
+          {/* 🔥 MENU BARU: Kelola Banner */}
+          <Link
+            to="/admin/banner"
+            className="block py-2 px-3 rounded hover:bg-blue-600 transition"
+          >
+            Kelola Banner
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-blue-500 text-sm text-center">
