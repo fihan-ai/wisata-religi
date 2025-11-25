@@ -20,12 +20,12 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/{any}', function () {
     // dev: use sibling Frontend
-    $index = base_path('../Frontend/index.html');
-
-    if (! File::exists($index)) {
-        abort(404, "Frontend index.html not found at: {$index}");
+    $frontendPath = realpath(__DIR__ . '/../../Frontend/index.html');
+    
+    if (!$frontendPath || !File::exists($frontendPath)) {
+        abort(404, "Frontend index.html not found at: {$frontendPath}");
     }
 
-    return File::get($index);
+    return File::get($frontendPath);
 })->where('any', '^(?!api|sanctum|_ignition|telescope).*$');
 require __DIR__.'/auth.php';

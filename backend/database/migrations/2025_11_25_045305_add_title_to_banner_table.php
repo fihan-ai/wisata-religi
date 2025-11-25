@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banner', function (Blueprint $table) {
-            $table->id();
-            $table->string('foto'); //path ke foto
-            $table->string('title')->nullable(); //judul banner
-            $table->text('description')->nullable(); //deskripsi banner
-            $table->timestamps(); 
+        Schema::table('banner', function (Blueprint $table) {
+            $table->string('title')->nullable()->after('foto');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banner');
+        Schema::table('banner', function (Blueprint $table) {
+            $table->dropColumn('title');
+        });
     }
 };

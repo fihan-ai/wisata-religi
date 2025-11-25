@@ -43,7 +43,20 @@ class ArtikelController extends Controller
     public function update(Request $request, $id)
     {
         $artikel = Artikel::findOrFail($id);
-        $artikel->update($request->all());
+        
+        $validated = $request->validate([
+            'judul' => 'required|string|max:255',
+            'isi' => 'required',
+            'tanggal_publish' => 'required|date_format:Y-m-d H:i:s',
+            'gambar' => 'nullable|string'
+        ]);
+        
+        $validated['tanggal_publish'] = \Carbon\Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $validated['tanggal_publish']
+        );
+        
+        $artikel->update($validated);
         return response()->json($artikel);
     }
 

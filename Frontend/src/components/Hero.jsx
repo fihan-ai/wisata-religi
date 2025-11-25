@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react"; // Tambahkan useRef
 import { motion, AnimatePresence } from "framer-motion";
-// Hapus: import CarouselNavigation from "./CarouselNavigation";
+import { getAllBanner } from "../api/bannerService";
 
 // --- KOMPONEN NAVIGASI KITA PINDAHKAN KE SINI ---
 function CarouselNavigation({ items, activeIndex, onItemClick }) {
@@ -61,7 +61,7 @@ function CarouselNavigation({ items, activeIndex, onItemClick }) {
           const isActive = index === activeIndex;
           return (
             <button
-              key={item.title} // Menggunakan title sebagai key unik
+              key={item.id || index} // Menggunakan id atau index sebagai key
               onClick={() => onItemClick(index)}
               className={`whitespace-nowrap flex-shrink-0 text-center transition-all duration-300 snap-center
                 ${isActive 
@@ -92,8 +92,8 @@ function CarouselNavigation({ items, activeIndex, onItemClick }) {
 }
 // --- AKHIR DARI KOMPONEN NAVIGASI ---
 
-
-const slides = [
+// Default slides fallback (if no banners in database)
+const defaultSlides = [
   {
     image: "/masjid-jamik-pangkalpinang.jpg",
     title: "Masjid Jami", 
@@ -126,12 +126,107 @@ const drop = {
 
 export default function Hero() {
   const [current, setCurrent] = useState(0);
+  const [slides, setSlides] = useState(defaultSlides);
+  const [loading, setLoading] = useState(true);
+
+  // Helper function to get image URL
+  // Backend now returns full URLs via Storage::url(), so we just need to handle fallbacks
+  const getImageUrl = (foto) => {
+    if (!foto) {
+      console.warn("No foto provided, using fallback");
+      return "/masjid-jamik-pangkalpinang.jpg"; // fallback
+    }
+    
+    // Backend should return full URL, but handle both cases
+    if (foto.startsWith("http://") || foto.startsWith("https://")) {
+      console.log("Using full URL from backend:", foto);
+      return foto;
+    }
+    
+    // Fallback: if backend didn't return full URL, construct it
+    const baseUrl = import.meta.env.VITE_API_URL 
+      ? import.meta.env.VITE_API_URL.replace("/api", "") 
+      : "http://127.0.0.1:8000";
+    
+    let cleanFoto = foto.trim();
+    if (cleanFoto.startsWith("/")) {
+      cleanFoto = cleanFoto.substring(1);
+    }
+    if (!cleanFoto.startsWith("storage/")) {
+      cleanFoto = `storage/${cleanFoto}`;
+    }
+    
+    const imageUrl = `${baseUrl}/${cleanFoto}`;
+    console.log("Constructed fallback image URL:", imageUrl, "from foto:", foto);
+    return imageUrl;
+  };
+
+  // Fetch banners from backend
   useEffect(() => {
+    async function fetchBanners() {
+      try {
+        setLoading(true);
+        console.log("Fetching banners...");
+        const data = await getAllBanner();
+        console.log("Banner data received:", data);
+        
+        // Handle different response shapes
+        let items = [];
+        if (Array.isArray(data)) {
+          items = data;
+        } else if (data && Array.isArray(data.data)) {
+          items = data.data;
+        } else {
+          items = [];
+        }
+
+        console.log("Processed banner items:", items);
+
+        // Map backend data to slides format
+        if (items.length > 0) {
+          const mappedSlides = items.map((banner, index) => {
+            const imageUrl = getImageUrl(banner.foto);
+            console.log(`Banner ${index}:`, {
+              id: banner.id,
+              foto: banner.foto,
+              title: banner.title,
+              imageUrl: imageUrl
+            });
+            return {
+              id: banner.id || index,
+              image: imageUrl,
+              title: banner.title || `Banner ${index + 1}`, // Use title from database or default
+              desc: banner.description || "Temukan keindahan spiritual dan nilai toleransi di berbagai tempat ibadah bersejarah di Bangka Belitung.", // Use description from database or default
+            };
+          });
+          console.log("Mapped slides:", mappedSlides);
+          setSlides(mappedSlides);
+        } else {
+          console.warn("No banners found in database, using default slides");
+          // If no banners, use default slides
+          setSlides(defaultSlides);
+        }
+      } catch (err) {
+        console.error("Error fetching banners:", err);
+        console.error("Error details:", err.response || err.message);
+        // On error, use default slides
+        setSlides(defaultSlides);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBanners();
+  }, []);
+
+  // Auto-rotate slides
+  useEffect(() => {
+    if (slides.length === 0) return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 7000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const splitText = (text) =>
     text.split("").map((char, i) => (
@@ -140,18 +235,61 @@ export default function Hero() {
       </motion.span>
     ));
 
+  // Show loading state
+  if (loading) {
+    return (
+      <section className="relative h-screen w-full overflow-hidden bg-gray-900">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
+            <p>Memuat banner...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Don't render if no slides
+  if (slides.length === 0) {
+    return null;
+  }
+
   return (
     <section className="relative h-screen w-full overflow-hidden">
       <AnimatePresence>
         <motion.div
           key={current}
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${slides[current].image})` }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.5 }}
         >
+          {/* Use img tag for better error handling */}
+          <img
+            key={slides[current].image}
+            src={slides[current].image}
+            alt={slides[current].title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+            onError={(e) => {
+              // Only log error if it's not already a fallback image
+              if (!e.target.src.includes("masjid-jamik") && !e.target.src.includes("default")) {
+                console.error("Image failed to load:", slides[current].image);
+                // Try fallback only once
+                if (!e.target.dataset.fallback) {
+                  e.target.dataset.fallback = "true";
+                  e.target.src = defaultSlides[0]?.image || "/masjid-jamik-pangkalpinang.jpg";
+                }
+              }
+            }}
+            onLoad={() => {
+              // Only log success in development
+              if (import.meta.env.DEV) {
+                console.log("Image loaded successfully:", slides[current].image);
+              }
+            }}
+          />
           <div className="absolute inset-0 bg-black/40"></div>
 
           {/* Konten tengah (tetap sama) */}

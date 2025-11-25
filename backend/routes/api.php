@@ -27,6 +27,9 @@ Route::apiResource('destinasi', DestinasiController::class);
 // API untuk tabel artikel
 Route::apiResource('artikel', ArtikelController::class);
 
+// API untuk tabel banner
+Route::apiResource('banner', \App\Http\Controllers\BannerController::class);
+
 Route::get('/', function (Request $request) {
     return response()->json([
         'status' => 'ok',

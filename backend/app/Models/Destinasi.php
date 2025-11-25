@@ -11,6 +11,8 @@ class Destinasi extends Model
 
     protected $table = 'destinasi';
     protected $primaryKey = 'id_destinasi';
+    public $incrementing = true;
+    protected $keyType = 'int';
     public $timestamps = true;
     protected $fillable = [
         'id_kategori',

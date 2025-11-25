@@ -83,7 +83,7 @@ function App() {
       />
 
       <Route
-        path="/destinasi/:slug"
+        path="/destinasi/:id"
         element={
           <UserLayout>
             <DetailDestinasi />
