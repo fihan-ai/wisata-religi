@@ -42,7 +42,7 @@ export default function Home() {
   };
 
   // Truncate text for excerpt
-  const truncateText = (text, maxLength = 120) => {
+  const truncateText = (text, maxLength = 180) => {
     if (!text) return "Tidak ada ringkasan tersedia";
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + "...";
@@ -67,10 +67,14 @@ export default function Home() {
 
         // Map backend data to frontend format (limit to 3 for home page)
         const mappedData = items.slice(0, 3).map((item) => ({
-          id: item.id_destinasi ?? item.id, // <-- pakai ID destinasi
+          id: item.id_destinasi ?? item.id, // pakai ID destinasi
           name: item.nama_destinasi ?? item.nama ?? "",
           image: getImageUrl(item.foto),
-          description: item.deskripsi || "Deskripsi tidak tersedia",
+          // ⬇️ Deskripsi dipotong supaya card pendek & rapi
+          description: truncateText(
+            item.deskripsi || "Deskripsi tidak tersedia",
+            180
+          ),
         }));
 
         setWisataData(mappedData);
@@ -119,7 +123,7 @@ export default function Home() {
           imageUrl: getImageUrl(item.gambar),
           date: formatDate(item.tanggal_publish),
           category: "Berita", // Default category (not in database)
-          slug: String(item.id_artikel ?? item.id), // <-- slug = ID artikel
+          slug: String(item.id_artikel ?? item.id), // slug = ID artikel
         }));
 
         setBeritaData(mappedData);
@@ -136,7 +140,6 @@ export default function Home() {
 
   // Handle navigation for CardWisata
   const handleWisataClick = (id) => {
-    // sekarang pakai ID, bukan slug nama
     navigate(`/destinasi/${id}`);
   };
 
@@ -167,7 +170,7 @@ export default function Home() {
               <CardWisata
                 key={wisata.id}
                 {...wisata}
-                onClick={() => handleWisataClick(wisata.id)} // <-- kirim ID
+                onClick={() => handleWisataClick(wisata.id)}
               />
             ))}
           </div>
