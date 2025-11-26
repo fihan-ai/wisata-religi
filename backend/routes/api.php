@@ -5,34 +5,32 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DestinasiController;
 use App\Http\Controllers\ArtikelController;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\AuthController;
 
+/** AUTH ADMIN */
+Route::post('/auth/login', [AuthController::class, 'login']);
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Semua route di file ini otomatis menggunakan prefix "/api".
-| Jadi kalau kamu tulis Route::get('kategori'), alamat sebenarnya adalah:
-| http://127.0.0.1:8000/api/kategori
-|
-*/
+/** ROUTE PUBLIK (bisa diakses tanpa login) */
+Route::apiResource('kategori', KategoriController::class)->only(['index', 'show']);
+Route::apiResource('destinasi', DestinasiController::class)->only(['index', 'show']);
+Route::apiResource('artikel',   ArtikelController::class)->only(['index', 'show']);
+Route::apiResource('banner',    BannerController::class)->only(['index', 'show']);
 
-// API untuk tabel kategori
-Route::apiResource('kategori', KategoriController::class);
+/** ROUTE ADMIN (butuh token admin) */
+Route::middleware(['auth:sanctum', 'is_admin'])->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-// API untuk tabel destinasi
-Route::apiResource('destinasi', DestinasiController::class);
+    Route::apiResource('kategori', KategoriController::class)->except(['index', 'show']);
+    Route::apiResource('destinasi', DestinasiController::class)->except(['index', 'show']);
+    Route::apiResource('artikel',   ArtikelController::class)->except(['index', 'show']);
+    Route::apiResource('banner',    BannerController::class)->except(['index', 'show']);
+});
 
-// API untuk tabel artikel
-Route::apiResource('artikel', ArtikelController::class);
-
-// API untuk tabel banner
-Route::apiResource('banner', \App\Http\Controllers\BannerController::class);
-
+/** TEST ROOT API */
 Route::get('/', function (Request $request) {
     return response()->json([
-        'status' => 'ok',
-        'message' => 'API root — backend is up'
+        'status'  => 'ok',
+        'message' => 'API root — backend is up',
     ]);
 });
