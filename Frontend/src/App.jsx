@@ -16,6 +16,8 @@ import DetailDestinasi from "./pages/DetailDestinasi";
 import DetailBerita from "./pages/DetailBerita";
 
 // Halaman admin
+import LoginPage from "./pages/Login.jsx";   
+import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import BeritaAdmin from "./pages/admin/BeritaAdmin";
 import DestinasiAdmin from "./pages/admin/DestinasiAdmin";
@@ -92,14 +94,19 @@ function App() {
       />
 
       {/* --- ADMIN AREA --- */}
-      <Route
-        path="/admin"
-        element={
-          <AdminLayout>
-            <DashboardAdmin />
-          </AdminLayout>
-        }
-      />
+<Route path="/login" element={<LoginPage />} />
+
+<Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminLayout>
+        <DashboardAdmin />
+      </AdminLayout>
+    </ProtectedRoute>
+  }
+/>
+
 
       <Route
         path="/admin/berita"
