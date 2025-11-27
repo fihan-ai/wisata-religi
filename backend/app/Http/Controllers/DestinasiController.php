@@ -21,7 +21,7 @@ class DestinasiController extends Controller
         'id_kategori'    => 'nullable|integer|exists:kategori,id_kategori',
         'nama_destinasi' => 'nullable|string|max:100',
         'deskripsi'      => 'nullable|string',
-        'alamat'         => 'nullable|string|max:100',
+        'alamat'         => 'nullable|string',
         'kota'           => 'nullable|string|max:50',
         'lattitude'      => 'nullable|numeric',
         'longitude'      => 'nullable|numeric',
